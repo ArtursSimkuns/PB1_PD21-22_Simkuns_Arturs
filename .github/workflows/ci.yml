@@ -1,16 +1,19 @@
 name: CI
 
-on: push
+on:
+  push:
+  pull_request:
 
 jobs:
-  test:
+  docker-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Build Docker image
+        run: docker build -t pb1-broken-api .
 
-      - name: Run tests
-        run: pytest
+      - name: Run tests inside Docker container
+        run: docker run --rm pb1-broken-api python -m pytest
